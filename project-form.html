@@ -76,6 +76,14 @@
           <label>Nombre del líder social <span class="pf-req">*</span></label>
           <input type="text" id="pf-lider" class="pf-input" placeholder="Nombre completo del responsable del proyecto"/>
           <span class="error-msg" id="err-lider">Por favor ingresa el nombre del líder social</span>
+          <span id="pf-lider-hint" style="display:none;font-size:.75rem;color:#16A34A;margin-top:4px;display:flex;align-items:center;gap:4px">
+            <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            Llenado automáticamente desde tu cuenta
+          </span>
+        </div>
+        <div class="pf-field">
+          <label>Ubicación del proyecto</label>
+          <input type="text" id="pf-ubicacion" class="pf-input" placeholder="Ej: CDMX, Campus Norte, Colonia Esperanza"/>
         </div>
 
         <!-- Sección 3: Imagen -->
@@ -115,6 +123,17 @@
   </div>
 
   <script>
+    /* ── Auto-fill leader from session ─────────────── */
+    let sessionUser = null;
+    try {
+      sessionUser = JSON.parse(localStorage.getItem('user') || 'null');
+      if (sessionUser && sessionUser.loggedIn && sessionUser.nombre) {
+        const liderInput = document.getElementById('pf-lider');
+        liderInput.value = sessionUser.nombre;
+        document.getElementById('pf-lider-hint').style.display = 'flex';
+      }
+    } catch(e) {}
+
     /* ── File upload ─────────────────────────────────── */
     const uploadArea    = document.getElementById('upload-area');
     const fileInput     = document.getElementById('file-input');
@@ -209,13 +228,34 @@
       }
 
       if (!valid) {
-        // Scroll to first error
         document.querySelector('.pf-field.has-error')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
         return;
       }
 
-      alert('¡Proyecto registrado exitosamente!');
-      window.location.href = 'index.html';
+      // Save to custom_projects in localStorage
+      const imgSrc   = document.getElementById('preview-img').src || '';
+      const ubicacion= document.getElementById('pf-ubicacion').value.trim();
+      const customs  = JSON.parse(localStorage.getItem('custom_projects') || '[]');
+      const newProj  = {
+        id:         Date.now(),
+        title:      nombre,
+        desc:       descCorta,
+        about:      descLarga,
+        category:   categoria,
+        img:        imgSrc || 'https://images.unsplash.com/photo-1593113598332-cd288d649433?w=900&q=80',
+        leader:     lider,
+        location:   ubicacion || 'Sin especificar',
+        volunteers: 0,
+        isCustom:   true,
+        createdAt:  Date.now(),
+        creatorKey: sessionUser ? (sessionUser.username || sessionUser.nombre || '') : lider
+      };
+      customs.push(newProj);
+      localStorage.setItem('custom_projects', JSON.stringify(customs));
+
+      // Redirect to the new project page
+      const newIdx = 15 + (customs.length - 1);
+      window.location.href = `project-page.html?id=${newIdx}`;
     });
   </script>
 </body>

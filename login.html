@@ -6,32 +6,7 @@
   <title>Iniciar Sesión - Proyectos Solidarios</title>
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="styles/styles.css"/>
-  <style>
-    /* Password field – pink/purple border */
-    #login-pass {
-      border: 1.5px solid #C680E8 !important;
-      background: white !important;
-    }
-    #login-pass:focus {
-      border-color: #A855F7 !important;
-      box-shadow: 0 0 0 3px rgba(168,85,247,.15) !important;
-    }
-
-    .lp-icon {
-      width: 60px; height: 60px;
-      background: #5AABF5;
-      border-radius: 16px;
-      display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 14px;
-    }
-
-    .btn-login { background: #4AAFF5; color: white; }
-    .btn-login:hover { background: #2E9EF0; }
-
-    .forgot-pass { color: #06C4E0; }
-    .forgot-pass:hover { color: #0EA5C9; }
-    .auth-alt a { color: #06C4E0; }
-  </style>
+  <link rel="stylesheet" href="styles/login.css"/>
 </head>
 <body class="subpage">
 
@@ -75,52 +50,6 @@
     </form>
   </div>
 
-  <script>
-    document.querySelectorAll('.eye-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const input = btn.closest('.field-wrap')?.querySelector('input');
-        if (!input) return;
-        input.type = input.type === 'password' ? 'text' : 'password';
-      });
-    });
-
-    function setError(fieldId, errId, show) {
-      document.getElementById(fieldId).classList.toggle('has-error', show);
-      document.getElementById(errId).classList.toggle('show', show);
-    }
-
-    document.getElementById('form-login').addEventListener('submit', e => {
-      e.preventDefault();
-      const user = document.getElementById('login-user').value.trim();
-      const pass = document.getElementById('login-pass').value.trim();
-
-      let valid = true;
-      if (!user) { setError('field-user', 'err-user', true); valid = false; }
-      else        { setError('field-user', 'err-user', false); }
-
-      if (!pass)  { setError('field-pass', 'err-pass', true); valid = false; }
-      else        { setError('field-pass', 'err-pass', false); }
-
-      if (!valid) return;
-
-      // Preserve registration data (nombre, email, rol) if it exists
-      const existing = JSON.parse(localStorage.getItem('user') || '{}');
-      localStorage.setItem('user', JSON.stringify({
-        ...existing,
-        username: user,
-        loggedIn: true
-      }));
-      window.location.href = 'index.html';
-    });
-
-    // Clear error on input
-    ['login-user', 'login-pass'].forEach(id => {
-      document.getElementById(id).addEventListener('input', () => {
-        const fieldId = id === 'login-user' ? 'field-user' : 'field-pass';
-        const errId   = id === 'login-user' ? 'err-user'   : 'err-pass';
-        setError(fieldId, errId, false);
-      });
-    });
-  </script>
+  <script src="scripts/login.js"></script>
 </body>
 </html>
