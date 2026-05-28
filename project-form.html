@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Registrar Proyecto - Proyectos Solidarios</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="styles/styles.css"/>
+</head>
+<body class="subpage">
+  <a href="index.html" class="back-link">
+    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+    Inicio
+  </a>
+
+  <div class="pf-wrap">
+    <h1 class="pf-title">Registro de Proyecto de Servicio Social</h1>
+    <p class="pf-sub">Complete el formulario para registrar su iniciativa comunitaria</p>
+
+    <div class="pf-card">
+      <form id="form-project" novalidate>
+
+        <!-- Sección 1: Información General -->
+        <div class="pf-section-hd">
+          <div class="pf-sh-icon pf-sh-blue">
+            <svg width="18" height="18" fill="none" stroke="#1A56E8" stroke-width="1.8" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>
+          </div>
+          <h3>Información General del Proyecto</h3>
+        </div>
+        <hr class="pf-hr"/>
+
+        <div class="pf-field" id="field-nombre">
+          <label>Nombre del proyecto <span class="pf-req">*</span></label>
+          <input type="text" id="pf-nombre" class="pf-input" placeholder="Ej: Alimentación Solidaria Comunitaria"/>
+          <span class="error-msg" id="err-nombre">Por favor ingresa el nombre del proyecto</span>
+        </div>
+        <div class="pf-field" id="field-desc-corta">
+          <label>Descripción corta <span class="pf-req">*</span></label>
+          <input type="text" id="pf-desc-corta" class="pf-input" placeholder="Resuma su proyecto en una frase (máx. 150 caracteres)" maxlength="150"/>
+          <span class="error-msg" id="err-desc-corta">Por favor ingresa una descripción corta</span>
+        </div>
+        <div class="pf-field" id="field-desc-larga">
+          <label>Descripción detallada <span class="pf-req">*</span></label>
+          <textarea id="pf-desc-larga" class="pf-input pf-textarea" rows="5" placeholder="Describa en detalle los objetivos, alcance y beneficiarios de su proyecto..."></textarea>
+          <span class="error-msg" id="err-desc-larga">Por favor ingresa una descripción detallada</span>
+        </div>
+        <div class="pf-field" id="field-categoria">
+          <div class="pf-inline-label">
+            <svg width="16" height="16" fill="none" stroke="#7C3AED" stroke-width="1.8" viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+            <label>Categoría del proyecto <span class="pf-req">*</span></label>
+          </div>
+          <select id="pf-categoria" class="pf-input pf-select">
+            <option value="" disabled selected>Seleccione una categoría</option>
+            <option>Alimentación y Nutrición</option>
+            <option>Educación y Tutorías</option>
+            <option>Salud y Bienestar</option>
+            <option>Medio Ambiente</option>
+            <option>Construcción y Vivienda</option>
+            <option>Tecnología e Inclusión Digital</option>
+            <option>Arte y Cultura</option>
+            <option>Otro</option>
+          </select>
+          <span class="error-msg" id="err-categoria">Por favor selecciona una categoría</span>
+        </div>
+
+        <!-- Sección 2: Líder Social -->
+        <div class="pf-section-hd" style="margin-top:28px">
+          <div class="pf-sh-icon pf-sh-purple">
+            <svg width="18" height="18" fill="none" stroke="#7C3AED" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+          </div>
+          <h3>Información del Líder Social</h3>
+        </div>
+        <hr class="pf-hr"/>
+
+        <div class="pf-field" id="field-lider">
+          <label>Nombre del líder social <span class="pf-req">*</span></label>
+          <input type="text" id="pf-lider" class="pf-input" placeholder="Nombre completo del responsable del proyecto"/>
+          <span class="error-msg" id="err-lider">Por favor ingresa el nombre del líder social</span>
+        </div>
+
+        <!-- Sección 3: Imagen -->
+        <div class="pf-section-hd" style="margin-top:28px">
+          <div class="pf-sh-icon pf-sh-green">
+            <svg width="18" height="18" fill="none" stroke="#16A34A" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+          </div>
+          <h3>Imagen del Proyecto</h3>
+        </div>
+        <hr class="pf-hr"/>
+
+        <div class="pf-field">
+          <label>Imagen representativa del proyecto</label>
+          <p class="pf-hint">Suba una imagen que represente visualmente su proyecto (JPG, PNG - máx. 5MB)</p>
+          <div class="upload-area" id="upload-area" role="button" tabindex="0" aria-label="Seleccionar imagen">
+            <input type="file" id="file-input" accept="image/jpeg,image/png" style="display:none"/>
+            <svg width="36" height="36" fill="none" stroke="#64748B" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            <p><strong>Haga clic para seleccionar una imagen</strong></p>
+            <p class="upload-sub">o arrastre y suelte aquí</p>
+          </div>
+          <div id="upload-preview" class="upload-preview" style="display:none">
+            <img id="preview-img" src="" alt="Vista previa"/>
+            <button type="button" id="remove-img" class="remove-img-btn" aria-label="Quitar imagen">&times;</button>
+          </div>
+        </div>
+
+        <div class="pf-actions">
+          <button type="submit" class="btn-full btn-cyan-solid">
+            <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+            Registrar proyecto
+          </button>
+          <p class="pf-req-note">Los campos marcados con <span class="pf-req">*</span> son obligatorios</p>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <script>
+    /* ── File upload ─────────────────────────────────── */
+    const uploadArea    = document.getElementById('upload-area');
+    const fileInput     = document.getElementById('file-input');
+    const uploadPreview = document.getElementById('upload-preview');
+    const previewImg    = document.getElementById('preview-img');
+    const removeImg     = document.getElementById('remove-img');
+
+    uploadArea.addEventListener('click', () => fileInput.click());
+    uploadArea.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') fileInput.click();
+    });
+    uploadArea.addEventListener('dragover', e => {
+      e.preventDefault();
+      uploadArea.classList.add('drag-over');
+    });
+    uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('drag-over'));
+    uploadArea.addEventListener('drop', e => {
+      e.preventDefault();
+      uploadArea.classList.remove('drag-over');
+      const file = e.dataTransfer.files[0];
+      if (file && file.type.startsWith('image/')) loadPreview(file);
+    });
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files[0]) loadPreview(fileInput.files[0]);
+    });
+    function loadPreview(file) {
+      const reader = new FileReader();
+      reader.onload = ev => {
+        previewImg.src = ev.target.result;
+        uploadArea.style.display = 'none';
+        uploadPreview.style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+    }
+    removeImg.addEventListener('click', () => {
+      previewImg.src = '';
+      fileInput.value = '';
+      uploadPreview.style.display = 'none';
+      uploadArea.style.display = 'block';
+    });
+
+    /* ── Validation ──────────────────────────────────── */
+    function setError(fieldId, errId, show, msg) {
+      document.getElementById(fieldId).classList.toggle('has-error', show);
+      const err = document.getElementById(errId);
+      err.classList.toggle('show', show);
+      if (msg) err.textContent = msg;
+    }
+
+    // Clear error on input/change
+    [
+      ['pf-nombre',     'field-nombre',     'err-nombre'],
+      ['pf-desc-corta', 'field-desc-corta', 'err-desc-corta'],
+      ['pf-desc-larga', 'field-desc-larga', 'err-desc-larga'],
+      ['pf-categoria',  'field-categoria',  'err-categoria'],
+      ['pf-lider',      'field-lider',      'err-lider'],
+    ].forEach(([inputId, fieldId, errId]) => {
+      const el = document.getElementById(inputId);
+      el.addEventListener('input',  () => setError(fieldId, errId, false));
+      el.addEventListener('change', () => setError(fieldId, errId, false));
+    });
+
+    document.getElementById('form-project').addEventListener('submit', e => {
+      e.preventDefault();
+      let valid = true;
+
+      const nombre    = document.getElementById('pf-nombre').value.trim();
+      const descCorta = document.getElementById('pf-desc-corta').value.trim();
+      const descLarga = document.getElementById('pf-desc-larga').value.trim();
+      const categoria = document.getElementById('pf-categoria').value;
+      const lider     = document.getElementById('pf-lider').value.trim();
+
+      if (!nombre) {
+        setError('field-nombre', 'err-nombre', true, 'Por favor ingresa el nombre del proyecto');
+        valid = false;
+      }
+      if (!descCorta) {
+        setError('field-desc-corta', 'err-desc-corta', true, 'Por favor ingresa una descripción corta');
+        valid = false;
+      }
+      if (!descLarga) {
+        setError('field-desc-larga', 'err-desc-larga', true, 'Por favor ingresa una descripción detallada');
+        valid = false;
+      }
+      if (!categoria) {
+        setError('field-categoria', 'err-categoria', true, 'Por favor selecciona una categoría');
+        valid = false;
+      }
+      if (!lider) {
+        setError('field-lider', 'err-lider', true, 'Por favor ingresa el nombre del líder social');
+        valid = false;
+      }
+
+      if (!valid) {
+        // Scroll to first error
+        document.querySelector('.pf-field.has-error')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+
+      alert('¡Proyecto registrado exitosamente!');
+      window.location.href = 'index.html';
+    });
+  </script>
+</body>
+</html>

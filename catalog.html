@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Catálogo de Proyectos - Proyectos Solidarios</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="styles/styles.css"/>
+  <style>
+    body.catalog-page {
+      background: linear-gradient(160deg, #0f2d70 0%, #1A56E8 45%, #1d4ed8 100%);
+      min-height: 100vh;
+    }
+
+    /* ── Header ───────────────────────────────────── */
+    .catalog-header {
+      text-align: center;
+      padding: 48px 24px 36px;
+      color: white;
+    }
+    .catalog-header h1 {
+      font-size: 2.1rem;
+      font-weight: 800;
+      letter-spacing: -.4px;
+    }
+    .catalog-header p {
+      font-size: .95rem;
+      opacity: .75;
+      margin-top: 8px;
+    }
+    .catalog-stats-row {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 22px;
+    }
+    .catalog-stat-chip {
+      background: rgba(255,255,255,.14);
+      border: 1px solid rgba(255,255,255,.28);
+      border-radius: 20px;
+      padding: 6px 18px;
+      font-size: .8rem;
+      font-weight: 600;
+      color: white;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* ── Search + filters ─────────────────────────── */
+    .catalog-search-wrap {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    .search-bar {
+      background: white;
+      border-radius: 14px;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 6px 20px rgba(0,0,0,.18);
+      margin-bottom: 14px;
+    }
+    .search-bar input {
+      flex: 1; border: none; outline: none;
+      font-size: .92rem; font-family: inherit; color: #111827; background: none;
+    }
+    .search-bar input::placeholder { color: #9CA3AF; }
+    .search-clear {
+      background: none; border: none; cursor: pointer; padding: 2px;
+      color: #9CA3AF; display: none; align-items: center;
+    }
+    .search-clear.show { display: flex; }
+    .search-clear:hover { color: #6B7280; }
+
+    .filter-pills {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      padding-bottom: 2px;
+    }
+    .filter-pills::-webkit-scrollbar { display: none; }
+    .filter-pill {
+      white-space: nowrap;
+      padding: 7px 16px;
+      border-radius: 20px;
+      border: 1.5px solid rgba(255,255,255,.45);
+      background: rgba(255,255,255,.08);
+      color: rgba(255,255,255,.85);
+      cursor: pointer;
+      font-size: .8rem;
+      font-weight: 500;
+      font-family: inherit;
+      transition: all .15s;
+    }
+    .filter-pill:hover {
+      background: rgba(255,255,255,.18);
+      border-color: rgba(255,255,255,.75);
+      color: white;
+    }
+    .filter-pill.active {
+      background: white;
+      border-color: white;
+      color: #1A56E8;
+      font-weight: 700;
+    }
+
+    /* ── Grid area ────────────────────────────────── */
+    .catalog-body {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 28px 20px 60px;
+    }
+    .catalog-meta-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .catalog-count {
+      font-size: .84rem;
+      color: rgba(255,255,255,.7);
+      font-weight: 500;
+    }
+    .catalog-sort {
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.25);
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: .8rem;
+      color: white;
+      font-family: inherit;
+      cursor: pointer;
+      outline: none;
+      background-clip: padding-box;
+    }
+    .catalog-sort option { background: #1A56E8; }
+
+    .catalog-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+    }
+    .no-results {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 60px 0;
+      color: rgba(255,255,255,.6);
+      font-size: .95rem;
+    }
+
+    /* ── Project cards ───────────────────────────── */
+    .cat-card {
+      background: white;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 4px 16px rgba(0,0,0,.12);
+      transition: transform .22s, box-shadow .22s;
+      display: flex;
+      flex-direction: column;
+    }
+    .cat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 14px 32px rgba(0,0,0,.2);
+    }
+
+    .cat-img-wrap {
+      position: relative;
+      height: 196px;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .cat-img-wrap img {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform .35s;
+    }
+    .cat-card:hover .cat-img-wrap img { transform: scale(1.05); }
+
+    .cat-badge {
+      position: absolute;
+      top: 12px; left: 12px;
+      padding: 4px 11px;
+      border-radius: 20px;
+      font-size: .7rem;
+      font-weight: 700;
+      color: white;
+      letter-spacing: .3px;
+    }
+    .cat-volunteers-chip {
+      position: absolute;
+      bottom: 10px; right: 10px;
+      background: rgba(0,0,0,.55);
+      backdrop-filter: blur(4px);
+      border-radius: 20px;
+      padding: 4px 10px;
+      font-size: .7rem;
+      font-weight: 600;
+      color: white;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .cat-body {
+      padding: 18px 18px 20px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .cat-title {
+      font-size: .97rem;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 7px;
+      line-height: 1.3;
+    }
+    .cat-desc {
+      font-size: .81rem;
+      color: #6B7280;
+      line-height: 1.55;
+      flex: 1;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      margin-bottom: 14px;
+    }
+    .cat-meta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: .76rem;
+      color: #9CA3AF;
+      padding-top: 12px;
+      border-top: 1px solid #F3F4F6;
+      margin-bottom: 12px;
+    }
+    .cat-meta svg { flex-shrink: 0; }
+    .cat-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: .83rem;
+      font-weight: 700;
+      color: #F05A28;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      font-family: inherit;
+      transition: gap .15s, color .15s;
+    }
+    .cat-link:hover { color: #c9451a; gap: 9px; }
+
+    @media (max-width: 900px)  { .catalog-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 540px)  { .catalog-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body class="catalog-page">
+
+  <button id="menu-btn" aria-label="Abrir menú">
+    <span></span><span></span><span></span>
+  </button>
+  <div id="nav-overlay"></div>
+  <nav id="side-nav" aria-label="Menú principal">
+    <div id="nav-logo">
+      <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="8" fill="rgba(255,255,255,.2)"/><path d="M8 20 L16 10 L24 20" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 20 L16 14 L20 20" fill="white"/></svg>
+      <div class="logo-text"><strong>Proyectos</strong><span>Solidarios</span></div>
+    </div>
+    <h3>Menú de Navegación</h3>
+    <ul class="nav-links">
+      <li><a href="index.html"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><path d="M9 22V12h6v10"/></svg><div class="link-info"><strong>Inicio</strong><span>Página principal</span></div></a></li>
+      <li><a href="feed.html"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M4 11h16M4 6h16M4 16h10"/></svg><div class="link-info"><strong>Feed</strong><span>Actividades recientes</span></div></a></li>
+      <li><a href="catalog.html" class="nav-active"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><div class="link-info"><strong>Catálogo</strong><span>Todos los proyectos</span></div></a></li>
+      <li><a href="project-form.html"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><div class="link-info"><strong>Registrar</strong><span>Nueva iniciativa</span></div></a></li>
+      <li><a href="login.html"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg><div class="link-info"><strong>Perfil</strong><span>Gestiona tu cuenta</span></div></a></li>
+    </ul>
+    <div id="user-panel" class="nav-user-panel">
+      <div class="nav-user-avatar" id="nav-avatar">U</div>
+      <div class="nav-user-info"><strong id="nav-username">Usuario</strong><span>En línea</span></div>
+      <button class="nav-logout-btn" id="nav-logout" title="Cerrar sesión">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Header -->
+  <header class="catalog-header">
+    <h1>Catálogo de Proyectos</h1>
+    <p>Descubre, apoya y únete a nuestras iniciativas solidarias</p>
+    <div class="catalog-stats-row" id="catalog-stats"></div>
+  </header>
+
+  <!-- Search + filters -->
+  <div class="catalog-search-wrap">
+    <div class="search-bar">
+      <svg width="18" height="18" fill="none" stroke="#9CA3AF" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <input type="text" id="search-input" placeholder="Buscar por nombre, descripción o líder..."/>
+      <button class="search-clear" id="search-clear" aria-label="Limpiar búsqueda">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="filter-pills" id="filter-pills"></div>
+  </div>
+
+  <!-- Grid -->
+  <div class="catalog-body">
+    <div class="catalog-meta-row">
+      <span class="catalog-count" id="catalog-count"></span>
+      <select class="catalog-sort" id="catalog-sort">
+        <option value="default">Orden predeterminado</option>
+        <option value="volunteers-desc">Más voluntarios</option>
+        <option value="az">A → Z</option>
+        <option value="za">Z → A</option>
+      </select>
+    </div>
+    <div class="catalog-grid" id="catalog-grid"></div>
+  </div>
+
+  <script>
+    const CATEGORY_COLORS = {
+      'Alimentación y Nutrición':       '#16A34A',
+      'Educación y Tutorías':           '#0EA5E9',
+      'Medio Ambiente':                 '#059669',
+      'Salud y Bienestar':              '#E11D48',
+      'Construcción y Vivienda':        '#F05A28',
+      'Tecnología e Inclusión Digital': '#7C3AED',
+      'Arte y Cultura':                 '#DB2777',
+    };
+
+    const PILL_LABELS = {
+      'Alimentación y Nutrición':       'Alimentación',
+      'Educación y Tutorías':           'Educación',
+      'Medio Ambiente':                 'Medio Ambiente',
+      'Salud y Bienestar':              'Salud',
+      'Construcción y Vivienda':        'Construcción',
+      'Tecnología e Inclusión Digital': 'Tecnología',
+      'Arte y Cultura':                 'Arte y Cultura',
+    };
+
+    const PROJECTS = [
+      {
+        title: 'Banco de Alimentos Universitario',
+        desc: 'Recolección y distribución de alimentos para familias de la comunidad universitaria en situación vulnerable. Cada semana repartimos más de 200 despensas a quienes más lo necesitan.',
+        category: 'Alimentación y Nutrición',
+        img: 'https://images.unsplash.com/photo-1593113598332-cd288d649433?w=600&q=80',
+        leader: 'María González',
+        location: 'Campus Norte',
+        volunteers: 45,
+      },
+      {
+        title: 'Tutorías Académicas Gratuitas',
+        desc: 'Apoyo educativo personalizado para niños y jóvenes de comunidades con bajos recursos. Ofrecemos clases de matemáticas, español, inglés y ciencias con voluntarios universitarios.',
+        category: 'Educación y Tutorías',
+        img: 'https://images.unsplash.com/photo-1529390079861-591de354faf5?w=600&q=80',
+        leader: 'Carlos Ramírez',
+        location: 'Comunidad San Pedro',
+        volunteers: 28,
+      },
+      {
+        title: 'Limpieza de Espacios Naturales',
+        desc: 'Jornadas de limpieza y reforestación en parques, playas y áreas verdes urbanas. Hemos recuperado más de 15 espacios públicos y plantado 800 árboles nativos.',
+        category: 'Medio Ambiente',
+        img: 'https://images.unsplash.com/photo-1618477461853-cf6ed80faba5?w=600&q=80',
+        leader: 'Ana Martínez',
+        location: 'Playa del Carmen',
+        volunteers: 52,
+      },
+      {
+        title: 'Brigadas de Salud Comunitaria',
+        desc: 'Servicios médicos básicos, vacunación y campañas de prevención en comunidades rurales sin acceso a atención médica formal. Atendemos más de 300 pacientes por mes.',
+        category: 'Salud y Bienestar',
+        img: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=600&q=80',
+        leader: 'Dr. Luis Torres',
+        location: 'Comunidad Rural',
+        volunteers: 34,
+      },
+      {
+        title: 'Construcción de Viviendas Dignas',
+        desc: 'Proyecto de construcción y mejoramiento de viviendas para familias en situación de vulnerabilidad extrema. En el último año hemos edificado 18 hogares con materiales de calidad.',
+        category: 'Construcción y Vivienda',
+        img: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=600&q=80',
+        leader: 'Roberto Sánchez',
+        location: 'Colonia Esperanza',
+        volunteers: 19,
+      },
+      {
+        title: 'Alfabetización Digital para Adultos',
+        desc: 'Capacitación en tecnología, internet y herramientas digitales para adultos mayores y personas sin acceso previo. Más de 120 participantes certificados hasta la fecha.',
+        category: 'Tecnología e Inclusión Digital',
+        img: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=600&q=80',
+        leader: 'Ing. Fernanda López',
+        location: 'Centro Comunitario',
+        volunteers: 23,
+      },
+      {
+        title: 'Huertos Urbanos Comunitarios',
+        desc: 'Diseño, instalación y mantenimiento de huertos orgánicos en azoteas y espacios urbanos. Promovemos la soberanía alimentaria, el compostaje y la agricultura sostenible.',
+        category: 'Medio Ambiente',
+        img: 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600&q=80',
+        leader: 'Diana Herrera',
+        location: 'Parque Central',
+        volunteers: 31,
+      },
+      {
+        title: 'Centro de Apoyo Psicológico',
+        desc: 'Atención psicológica gratuita e individual para personas en situación de vulnerabilidad. Contamos con profesionales certificados, grupos de apoyo y talleres de bienestar mental.',
+        category: 'Salud y Bienestar',
+        img: 'https://images.unsplash.com/photo-1573497620053-ea5300f94f21?w=600&q=80',
+        leader: 'Psic. Claudia Vega',
+        location: 'Clínica Comunitaria',
+        volunteers: 15,
+      },
+      {
+        title: 'Biblioteca Comunitaria Móvil',
+        desc: 'Llevamos libros, cuentos y material didáctico a comunidades sin acceso a bibliotecas. Organizamos clubes de lectura infantil y talleres de escritura creativa para todas las edades.',
+        category: 'Educación y Tutorías',
+        img: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=600&q=80',
+        leader: 'Prof. Miguel Ángel Ruiz',
+        location: 'Barrio Sur',
+        volunteers: 22,
+      },
+      {
+        title: 'Taller de Arte y Expresión Joven',
+        desc: 'Talleres semanales de pintura, teatro, música y fotografía para jóvenes en zonas de riesgo. El arte como herramienta de transformación social, prevención y desarrollo personal.',
+        category: 'Arte y Cultura',
+        img: 'https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=600&q=80',
+        leader: 'Sofía Ramos',
+        location: 'Centro Cultural',
+        volunteers: 27,
+      },
+      {
+        title: 'Red de Reciclaje Escolar',
+        desc: 'Programa integral de separación, recolección y reciclaje de residuos en escuelas primarias y secundarias. Hemos evitado el envío de más de 5 toneladas de basura al vertedero este ciclo.',
+        category: 'Medio Ambiente',
+        img: 'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=600&q=80',
+        leader: 'Tomás Guerrero',
+        location: 'Escuelas Municipales',
+        volunteers: 38,
+      },
+      {
+        title: 'Emprendimiento Social Femenino',
+        desc: 'Capacitación en habilidades empresariales, finanzas y mercadeo para mujeres en situación de vulnerabilidad. Hemos apoyado el lanzamiento de 35 microempresas en la región.',
+        category: 'Educación y Tutorías',
+        img: 'https://images.unsplash.com/photo-1573164713714-d95e436ab8d6?w=600&q=80',
+        leader: 'Patricia Morales',
+        location: 'Cooperativa Local',
+        volunteers: 41,
+      },
+      {
+        title: 'Cocinas Comunitarias Solidarias',
+        desc: 'Red de cocinas barriales que preparan comidas nutritivas para adultos mayores y familias en situación de pobreza alimentaria. Servimos más de 500 porciones diarias.',
+        category: 'Alimentación y Nutrición',
+        img: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&q=80',
+        leader: 'Rosa Elena Fuentes',
+        location: 'Barrio Tepito',
+        volunteers: 33,
+      },
+      {
+        title: 'Programa de Reforestación Costera',
+        desc: 'Siembra de manglares y vegetación nativa en zonas costeras degradadas. Hemos restaurado 4 km de litoral, protegiendo la biodiversidad marina y reduciendo la erosión costera.',
+        category: 'Medio Ambiente',
+        img: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=600&q=80',
+        leader: 'Biol. Jorge Espinoza',
+        location: 'Costa Verde',
+        volunteers: 44,
+      },
+      {
+        title: 'Clínica Dental Comunitaria',
+        desc: 'Atención odontológica preventiva y curativa para niños y adultos sin acceso a servicios dentales privados. Incluye extracciones, limpiezas y talleres de higiene bucal.',
+        category: 'Salud y Bienestar',
+        img: 'https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=600&q=80',
+        leader: 'Dra. Valeria Soto',
+        location: 'Sector Popular',
+        volunteers: 12,
+      },
+    ];
+
+    let activeCategory = '';
+    let searchQuery    = '';
+
+    // Build header stats
+    function buildStats() {
+      const totalVol = PROJECTS.reduce((s, p) => s + p.volunteers, 0);
+      const cats     = new Set(PROJECTS.map(p => p.category)).size;
+      document.getElementById('catalog-stats').innerHTML = `
+        <span class="catalog-stat-chip">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+          ${PROJECTS.length} Proyectos
+        </span>
+        <span class="catalog-stat-chip">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+          ${cats} Categorías
+        </span>
+        <span class="catalog-stat-chip">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+          ${totalVol}+ Voluntarios
+        </span>
+      `;
+    }
+
+    // Build category pills
+    function buildPills() {
+      const container = document.getElementById('filter-pills');
+      const categories = [...new Set(PROJECTS.map(p => p.category))];
+      const all = ['', ...categories];
+      container.innerHTML = all.map(cat => {
+        const label = cat ? (PILL_LABELS[cat] || cat) : 'Todas';
+        const active = activeCategory === cat ? 'active' : '';
+        return `<button class="filter-pill ${active}" data-cat="${cat}">${label}</button>`;
+      }).join('');
+      container.querySelectorAll('.filter-pill').forEach(btn => {
+        btn.addEventListener('click', () => {
+          activeCategory = btn.dataset.cat;
+          buildPills();
+          render();
+        });
+      });
+    }
+
+    function getSorted(list) {
+      const sort = document.getElementById('catalog-sort').value;
+      const arr = [...list];
+      if (sort === 'volunteers-desc') return arr.sort((a, b) => b.volunteers - a.volunteers);
+      if (sort === 'az') return arr.sort((a, b) => a.title.localeCompare(b.title));
+      if (sort === 'za') return arr.sort((a, b) => b.title.localeCompare(a.title));
+      return arr;
+    }
+
+    function render() {
+      const q = searchQuery.toLowerCase();
+      let list = PROJECTS.filter(p =>
+        (!activeCategory || p.category === activeCategory) &&
+        (!q || p.title.toLowerCase().includes(q) ||
+               p.desc.toLowerCase().includes(q)  ||
+               p.leader.toLowerCase().includes(q))
+      );
+      list = getSorted(list);
+
+      document.getElementById('catalog-count').textContent =
+        `Mostrando ${list.length} proyecto${list.length !== 1 ? 's' : ''}`;
+
+      const grid = document.getElementById('catalog-grid');
+      if (!list.length) {
+        grid.innerHTML = '<div class="no-results">No se encontraron proyectos con esos filtros.</div>';
+        return;
+      }
+      grid.innerHTML = list.map(p => {
+        const color = CATEGORY_COLORS[p.category] || '#6B7280';
+        const shortCat = PILL_LABELS[p.category] || p.category;
+        return `
+          <div class="cat-card">
+            <div class="cat-img-wrap">
+              <img src="${p.img}" alt="${p.title}" loading="lazy"/>
+              <span class="cat-badge" style="background:${color}">${shortCat}</span>
+              <span class="cat-volunteers-chip">
+                <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+                ${p.volunteers} voluntarios
+              </span>
+            </div>
+            <div class="cat-body">
+              <div class="cat-title">${p.title}</div>
+              <p class="cat-desc">${p.desc}</p>
+              <div class="cat-meta">
+                <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+                ${p.leader}
+                <span style="margin-left:auto;display:flex;align-items:center;gap:4px">
+                  <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                  ${p.location}
+                </span>
+              </div>
+              <button class="cat-link">
+                Ver detalles
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </button>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    // Search events
+    const searchInput = document.getElementById('search-input');
+    const searchClear = document.getElementById('search-clear');
+    searchInput.addEventListener('input', () => {
+      searchQuery = searchInput.value;
+      searchClear.classList.toggle('show', !!searchQuery);
+      render();
+    });
+    searchClear.addEventListener('click', () => {
+      searchInput.value = '';
+      searchQuery = '';
+      searchClear.classList.remove('show');
+      searchInput.focus();
+      render();
+    });
+    document.getElementById('catalog-sort').addEventListener('change', render);
+
+    // Init
+    buildStats();
+    buildPills();
+    render();
+
+    // Nav
+    (function () {
+      const stored = JSON.parse(localStorage.getItem('user') || 'null');
+      const panel  = document.getElementById('user-panel');
+      const avatar = document.getElementById('nav-avatar');
+      const uname  = document.getElementById('nav-username');
+      const logoutBtn  = document.getElementById('nav-logout');
+      const perfilLink = document.querySelector('.nav-links a[href="login.html"]');
+
+      function getFriendlyName(u) {
+        if (u.nombre) return u.nombre;
+        if (u.username) {
+          const raw = u.username.includes('@') ? u.username.split('@')[0] : u.username;
+          return raw.charAt(0).toUpperCase() + raw.slice(1);
+        }
+        return 'Usuario';
+      }
+
+      if (stored && stored.loggedIn) {
+        const name = getFriendlyName(stored);
+        panel.classList.add('visible');
+        uname.textContent  = name;
+        avatar.textContent = name[0].toUpperCase();
+        if (perfilLink) perfilLink.setAttribute('href', 'profile.html');
+      }
+
+      logoutBtn.addEventListener('click', () => {
+        localStorage.removeItem('user');
+        panel.classList.remove('visible');
+        if (perfilLink) perfilLink.setAttribute('href', 'login.html');
+        closeNav();
+      });
+    })();
+
+    const menuBtn = document.getElementById('menu-btn');
+    const sideNav = document.getElementById('side-nav');
+    const overlay = document.getElementById('nav-overlay');
+
+    function openNav()  { sideNav.classList.add('open'); overlay.classList.add('show'); menuBtn.classList.add('open'); }
+    function closeNav() { sideNav.classList.remove('open'); overlay.classList.remove('show'); menuBtn.classList.remove('open'); }
+
+    menuBtn.addEventListener('click', openNav);
+    overlay.addEventListener('click', closeNav);
+    document.querySelectorAll('.nav-links a').forEach(a => a.addEventListener('click', closeNav));
+  </script>
+</body>
+</html>
